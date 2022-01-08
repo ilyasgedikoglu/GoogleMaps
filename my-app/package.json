@@ -8,15 +8,24 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.7.1",
+    "@emotion/styled": "^11.6.0",
+    "@googlemaps/react-wrapper": "^1.1.19",
+    "@googlemaps/typescript-guards": "^1.0.4",
+    "@mui/material": "^5.2.7",
+    "@react-google-maps/api": "^2.7.0",
+    "fast-equals": "^2.0.4",
     "next": "12.0.7",
     "react": "17.0.2",
     "react-dom": "17.0.2",
+    "react-google-map-picker": "^1.2.3",
     "styled-components": "^5.3.3"
   },
   "devDependencies": {
     "google-map-react": "^2.1.10",
     "lodash.isempty": "^4.4.0",
     "prop-types": "^15.8.1",
-    "react-router-dom": "^6.2.1"
+    "react-router-dom": "^6.2.1",
+    "typescript": "^4.5.4"
   }
 }

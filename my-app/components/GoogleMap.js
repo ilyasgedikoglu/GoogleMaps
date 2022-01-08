@@ -1,26 +1,34 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import GoogleMapReact from "google-map-react";
 import pin from "../pin.png";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
+import Button from '@mui/material/Button';
 
 // Marker component
 const Marker = ({ show, place }) => {
     const markerStyle = {
         border: '1px solid white',
-        borderRadius: '50%',
-        height: 10,
         width: 10,
+        height: 10,
+        borderRadius: '50%',
         backgroundColor: show ? 'red' : 'blue',
         cursor: 'pointer',
         zIndex: 10,
     };
 
+    const changeShow = () => {
+        window.alert('geldi')
+    }
+
     return (
         <>
-            <div style={markerStyle} >
-                <p>{place.name}</p>
-            </div>
+            {
+                !show ?
+                    <div style={markerStyle}/>
+                    :
+                    <div style={markerStyle}/>
+            }
             {show && <InfoWindow place={place} />}
         </>
     );
@@ -64,10 +72,26 @@ const InfoWindow = (props) => {
 
 function SimpleMap(props) {
     const [center, setCenter] = useState({
-        lat: 60.192059,
-        lng: 24.945831
+        lat: 39.992059,
+        lng: 32.945831
     });
-    const [zoom, setZoom] = useState(11)
+    const [zoom, setZoom] = useState(14)
+    const [lat, setLat] = useState(center.lat)
+    const [lng, setLng] = useState(center.lng)
+
+    function click(e) {
+        setLng(e.lng);
+        setLat(e.lat)
+        return(
+            <Marker
+                key={1}
+                lat={e.lat}
+                lng={e.lng}
+                place={""}
+                show={false}
+            />
+        )
+    }
 
     return (
         <div style={{ height: "100vh", width: "100%" }}>
@@ -75,22 +99,17 @@ function SimpleMap(props) {
                 bootstrapURLKeys={{key: ""}}
                 defaultCenter={center}
                 defaultZoom={zoom}
+                draggable={true}
+                onClick={(e) => click(e)}
+                yesIWantToUseGoogleMapApiInternals
             >
-                {props.locations.map(item => {
-                    if (item.address.length !== 0) {
-                        return item.address.map(i => {
-                            return (
-                                <Marker
-                                    key={i.id}
-                                    lat={i.lat}
-                                    lng={i.lng}
-                                    place={i}
-                                    show={false}
-                                />
-                            );
-                        });
-                    }
-                })}
+                <Marker
+                    key={1}
+                    lat={lat}
+                    lng={lng}
+                    place={""}
+                    show={false}
+                />
             </GoogleMapReact>
         </div>
     );
