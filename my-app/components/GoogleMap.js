@@ -72,25 +72,16 @@ const InfoWindow = (props) => {
 
 function SimpleMap(props) {
     const [center, setCenter] = useState({
-        lat: 39.992059,
-        lng: 32.945831
+        lat: 39.93361906501069,
+        lng: 32.85925510281058
     });
-    const [zoom, setZoom] = useState(14)
+    const [zoom, setZoom] = useState(16)
     const [lat, setLat] = useState(center.lat)
     const [lng, setLng] = useState(center.lng)
 
     function click(e) {
         setLng(e.lng);
         setLat(e.lat)
-        return(
-            <Marker
-                key={1}
-                lat={e.lat}
-                lng={e.lng}
-                place={""}
-                show={false}
-            />
-        )
     }
 
     return (

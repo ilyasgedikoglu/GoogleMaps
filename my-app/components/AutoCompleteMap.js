@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component, useEffect} from 'react';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
@@ -9,32 +9,31 @@ const Wrapper = styled.div`
   padding: 20px;
 `;
 
-class AutoComplete extends Component {
-    constructor(props) {
-        super(props);
-        this.clearSearchBox = this.clearSearchBox.bind(this);
-    }
+export default function AutoComplete (props) {
+    let searchInput;
+    console.log(props);
+    useEffect(() => {
+        clearSearchBox = clearSearchBox.bind(this);
+    }, [])
 
-    componentDidMount({ map, mapApi } = this.props) {
+    useEffect(() => {
         const options = {
-            // restrict your search to a specific type of result
-            // types: ['geocode', 'address', 'establishment', '(regions)', '(cities)'],
-            // restrict your search to a specific country, or an array of countries
-            // componentRestrictions: { country: ['gb', 'us'] },
+            types: ['geocode', 'address', 'establishment', '(regions)', '(cities)'],
+            componentRestrictions: { country: ['gb', 'us'] },
         };
-        this.autoComplete = new mapApi.places.Autocomplete(
-            this.searchInput,
+        const autoComplete = new props.mapApi.places.Autocomplete(
+            searchInput,
             options,
         );
-        this.autoComplete.addListener('place_changed', this.onPlaceChanged);
-        this.autoComplete.bindTo('bounds', map);
-    }
+        autoComplete.addListener('place_changed', onPlaceChanged);
+        autoComplete.bindTo('bounds', props.map);
+    })
 
-    componentWillUnmount({ mapApi } = this.props) {
-        mapApi.event.clearInstanceListeners(this.searchInput);
-    }
+    useEffect(() => {
+        props.mapApi.event.clearInstanceListeners(searchInput);
+    })
 
-    onPlaceChanged = ({ map, addplace } = this.props) => {
+    const onPlaceChanged = ({ map, addplace } = this.props) => {
         const place = this.autoComplete.getPlace();
 
         if (!place.geometry) return;
@@ -46,27 +45,23 @@ class AutoComplete extends Component {
         }
 
         addplace(place);
-        this.searchInput.blur();
+        searchInput.blur();
     };
 
-    clearSearchBox() {
-        this.searchInput.value = '';
+    function clearSearchBox() {
+        searchInput.value = '';
     }
 
-    render() {
-        return (
-            <Wrapper>
-                <input
-                    ref={(ref) => {
-                        this.searchInput = ref;
-                    }}
-                    type="text"
-                    onFocus={this.clearSearchBox}
-                    placeholder="Enter a location"
-                />
-            </Wrapper>
-        );
-    }
+    return (
+        <Wrapper>
+            <input
+                ref={(ref) => {
+                    searchInput = ref;
+                }}
+                type="text"
+                onFocus={clearSearchBox}
+                placeholder="Enter a location"
+            />
+        </Wrapper>
+    );
 }
-
-export default AutoComplete;
