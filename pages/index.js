@@ -8,7 +8,7 @@ function Home () {
     //            <SimpleMap search={false} />
     return (
         <div className="App">
-            <SimpleMap search={false} locations={locations} />
+            <SimpleMap search={true} locations={locations} />
         </div>
     );
 }
