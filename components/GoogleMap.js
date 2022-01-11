@@ -121,7 +121,7 @@ function SimpleMap(props) {
             method: 'get',
             url: "https://maps.googleapis.com/maps/api/place/textsearch/json?query=" + address +"&key=AIzaSyDUbXD4z3w1UoiCOxaAj0RFt3pT24k88O4",
             headers: {
-                "Access-Control-Allow-Origin": "*"
+                "Access-Control-Allow-Origin": "https://google-maps-eight.vercel.app/"
             }
         };
 
