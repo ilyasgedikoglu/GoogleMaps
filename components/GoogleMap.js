@@ -6,15 +6,17 @@ import pin from "../pin.png";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import Button from '@mui/material/Button';
+import axios from "axios";
+import Search from "./Search";
 
 // Marker component
-const Marker = ({ show, place }) => {
+const Marker = ({ show, place, search }) => {
     const markerStyle = {
         border: '1px solid white',
         width: 10,
         height: 10,
         borderRadius: '50%',
-        backgroundColor: show ? 'red' : 'blue',
+        backgroundColor: search ? 'red' : 'blue',
         cursor: 'pointer',
         zIndex: 10,
     };
@@ -81,6 +83,7 @@ function SimpleMap(props) {
     const [lat, setLat] = useState(center.lat)
     const [lng, setLng] = useState(center.lng)
     const [address, setAddress] = useState("");
+    const [searchResult, setSearchResult] = useState([]);
     const [mapInstance, setMapInstance] = useState(null);
     const [mapApi, setMapApi] = useState(null);
 
@@ -117,26 +120,49 @@ function SimpleMap(props) {
     }
 
     function searchAddress() {
-        const config = {
-            method: 'get',
+
+        /*
+        Axios({
+            method: 'GET',
             url: "https://maps.googleapis.com/maps/api/place/textsearch/json?query=" + address +"&key=AIzaSyDUbXD4z3w1UoiCOxaAj0RFt3pT24k88O4",
             headers: {
-                "Access-Control-Allow-Origin": "https://google-maps-eight.vercel.app/"
+                "Access-Control-Allow-Origin": "localhost:3000",
+                "Accept-Language": "tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7",
+                "Content-Language": "tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7",
+                "Content-Type": "application/json; charset=UTF-8",
+                "Access-Control-Allow-Headers": "Content-Type, x-requested-with",
+                "Content-Encoding": "gzip",
+                "access-control-allow-credentials": true,
+                "vary": "Accept-Encoding"
             }
-        };
-
-        Axios(config)
+        })
             .then(function (response) {
                 console.log(JSON.stringify(response.data));
+                const data = JSON.stringify(response.data);
+                const result = data.results;
+                if (result.length > 0){
+                    let searchRes = [];
+                    for (const item in result) {
+                        searchRes.push(
+                            {
+                                lat: item.geometry.location.lat,
+                                lng: item.geometry.location.lng,
+                                title: item.name,
+                                address: item.formatted_address
+                            });
+                    }
+                    setSearchResult(searchRes);
+                }
             })
             .catch(function (error) {
                 console.log(error);
-            });
+            });*/
     }
 
     return (
         <div>
             {
+                /*
                 props.search &&
                     <>
                         <input
@@ -147,6 +173,9 @@ function SimpleMap(props) {
                         />
                         <button onClick={() => searchAddress()}>Ara</button>
                     </>
+                */
+                props.search &&
+                    <Search/>
             }
             <div style={{ height: "100vh", width: "100%" }}>
                 <GoogleMapReact
@@ -160,6 +189,19 @@ function SimpleMap(props) {
                     onGoogleApiLoaded={({ map, maps }) => apiHasLoaded(map, maps)}
                 >
                     {
+                        searchResult.length > 0 &&
+                            searchResult.map((item, i) =>
+                                <Marker
+                                    key={i}
+                                    lat={item.lat}
+                                    lng={item.lng}
+                                    place={item}
+                                    show={false}
+                                    search={true}
+                                />
+                            )
+                    }
+                    {
                         props.locations && props.locations.length > 0 &&
                             props.locations.map((item, i) =>
                                 item.address.length > 0 &&
@@ -170,6 +212,7 @@ function SimpleMap(props) {
                                         lng={address.lng}
                                         place={item}
                                         show={false}
+                                        search={false}
                                     />
                                 )
                             )
@@ -180,6 +223,7 @@ function SimpleMap(props) {
                         lng={lng}
                         place={""}
                         show={false}
+                        search={false}
                     />
                 </GoogleMapReact>
             </div>
