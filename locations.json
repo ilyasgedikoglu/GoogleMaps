@@ -11,8 +11,8 @@
         "city": "Helsinki",
         "street": "Hogbergsgatan 35",
         "postcode": "00101",
-        "lat": "60.165238",
-        "lng": "24.946249"
+        "lat": "39.935772",
+        "lng": "32.848697"
       }
     ]
   },
@@ -28,8 +28,8 @@
         "city": "Helsinki",
         "street": "Yliopistonkatu 4",
         "postcode": "00101",
-        "lat": "60.169787",
-        "lng": "24.948776"
+        "lat": "32.879511",
+        "lng": "39.935772"
       }
     ]
   },
@@ -45,8 +45,8 @@
         "city": "Helsinki",
         "street": "Ladugordsbogen 3",
         "postcode": "00790",
-        "lat": "60.228029",
-        "lng": "25.015569"
+        "lat": "32.876077",
+        "lng": "39.935772"
       }
     ]
   },
@@ -62,8 +62,8 @@
         "city": "Helsinki",
         "street": "Haartmansgatan 4",
         "postcode": "00290",
-        "lat": "60.190711",
-        "lng": "24.907195"
+        "lat": "32.833162",
+        "lng": "39.935772"
       }
     ]
   }
