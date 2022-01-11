@@ -10,19 +10,12 @@
   "dependencies": {
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
-    "@googlemaps/react-wrapper": "^1.1.19",
-    "@googlemaps/typescript-guards": "^1.0.4",
     "@mui/material": "^5.2.7",
-    "@react-google-maps/api": "^2.7.0",
-    "antd": "^4.18.2",
     "axios": "^0.24.0",
-    "fast-equals": "^2.0.4",
     "google-maps-react": "^2.0.6",
     "next": "12.0.7",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "react-google-autocomplete": "^2.6.1",
-    "react-google-map-picker": "^1.2.3",
     "styled-components": "^5.3.3"
   },
   "devDependencies": {

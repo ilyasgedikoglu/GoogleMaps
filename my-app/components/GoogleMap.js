@@ -108,6 +108,8 @@ function SimpleMap(props) {
     function click(e) {
         setLng(e.lng);
         setLat(e.lat)
+        console.log(e.lat);
+        console.log(e.lng);
     }
 
     function clearSearchBox() {

@@ -5,9 +5,10 @@ const locations = require("../locations.json");
 function Home () {
     //locations gönderirsek addresleri listeliyor göndermezsek harita üzerinden işaretleyip lat ve lng değerleri alınıyor.
     //arama için search=true parametresini gönder. Arama yoksa false gönder
+    //            <SimpleMap search={false} />
     return (
         <div className="App">
-            <SimpleMap search={true} locations={locations} />
+            <SimpleMap search={false} locations={locations} />
         </div>
     );
 }
