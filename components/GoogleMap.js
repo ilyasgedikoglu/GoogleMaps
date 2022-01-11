@@ -160,7 +160,7 @@ function SimpleMap(props) {
                     onGoogleApiLoaded={({ map, maps }) => apiHasLoaded(map, maps)}
                 >
                     {
-                        props.locations && props.locations.length > 0 ?
+                        props.locations && props.locations.length > 0 &&
                             props.locations.map((item, i) =>
                                 item.address.length > 0 &&
                                 item.address.map((address, z) =>
@@ -172,15 +172,15 @@ function SimpleMap(props) {
                                         show={false}
                                     />
                                 )
-                            ) :
-                            <Marker
-                                key={1}
-                                lat={lat}
-                                lng={lng}
-                                place={""}
-                                show={false}
-                            />
+                            )
                     }
+                    <Marker
+                        key={1}
+                        lat={lat}
+                        lng={lng}
+                        place={""}
+                        show={false}
+                    />
                 </GoogleMapReact>
             </div>
         </div>
