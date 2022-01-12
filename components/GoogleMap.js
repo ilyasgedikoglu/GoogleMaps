@@ -7,8 +7,10 @@ import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import Button from '@mui/material/Button';
 import axios from "axios";
-import Search from "./Search";
+import {Combobox, ComboboxInput, ComboboxList, ComboboxOption, ComboboxPopover} from "@reach/combobox";
+import usePlacesAutocomplete, {getGeocode, getLatLng} from "use-places-autocomplete";
 
+import "@reach/combobox/styles.css";
 // Marker component
 const Marker = ({ show, place, search }) => {
     const markerStyle = {
@@ -87,6 +89,58 @@ function SimpleMap(props) {
     const [mapInstance, setMapInstance] = useState(null);
     const [mapApi, setMapApi] = useState(null);
 
+    const {
+        ready,
+        value,
+        suggestions: { status, data },
+        setValue,
+        clearSuggestions,
+    } = usePlacesAutocomplete();
+
+    const handleInput = (e) => {
+        setValue(e.target.value);
+    };
+
+    const handleSelect = (val) => {
+        setValue(val, false);
+        getGeocode({ address: val })
+            .then((results) => getLatLng(results[0]))
+            .then(({ lat, lng }) => {
+                setLat(lat);
+                setLng(lng);
+                setCenter({
+                    lat: lat,
+                    lng: lng
+                });
+                setZoom(7);
+                console.log("📍 Coordinates: ", { lat, lng });
+                clearSuggestions()
+            })
+            .catch((error) => {
+                clearSuggestions()
+                console.log("😱 Error: ", error);
+            });
+    };
+
+    const renderSuggestions = () => {
+        const suggestions = data.map(({ place_id, description }) => (
+            <ComboboxOption key={place_id} value={description} />
+        ));
+
+        return (
+            <>
+                {suggestions}
+                <li className="logo">
+                    <img
+                        src="https://developers.google.com/maps/documentation/images/powered_by_google_on_white.png"
+                        alt="Powered by Google"
+                    />
+                </li>
+            </>
+        );
+    };
+
+
     const createMapOptions = (maps) => {
         return {
             panControl: false,
@@ -119,74 +173,36 @@ function SimpleMap(props) {
         setAddress('');
     }
 
-    function searchAddress() {
-
-        /*
-        Axios({
-            method: 'GET',
-            url: "https://maps.googleapis.com/maps/api/place/textsearch/json?query=" + address +"&key=AIzaSyDUbXD4z3w1UoiCOxaAj0RFt3pT24k88O4",
-            headers: {
-                "Access-Control-Allow-Origin": "localhost:3000",
-                "Accept-Language": "tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7",
-                "Content-Language": "tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7",
-                "Content-Type": "application/json; charset=UTF-8",
-                "Access-Control-Allow-Headers": "Content-Type, x-requested-with",
-                "Content-Encoding": "gzip",
-                "access-control-allow-credentials": true,
-                "vary": "Accept-Encoding"
-            }
-        })
-            .then(function (response) {
-                console.log(JSON.stringify(response.data));
-                const data = JSON.stringify(response.data);
-                const result = data.results;
-                if (result.length > 0){
-                    let searchRes = [];
-                    for (const item in result) {
-                        searchRes.push(
-                            {
-                                lat: item.geometry.location.lat,
-                                lng: item.geometry.location.lng,
-                                title: item.name,
-                                address: item.formatted_address
-                            });
-                    }
-                    setSearchResult(searchRes);
-                }
-            })
-            .catch(function (error) {
-                console.log(error);
-            });*/
-    }
-
     return (
         <div>
             {
-                /*
                 props.search &&
-                    <>
-                        <input
-                            type="text"
-                            onFocus={() => clearSearchBox}
-                            onChange={e => setAddress(e.target.value.trim())}
-                            placeholder="Enter a address"
-                        />
-                        <button onClick={() => searchAddress()}>Ara</button>
-                    </>
-                */
-                props.search &&
-                    <Search/>
+                <>
+                    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDUbXD4z3w1UoiCOxaAj0RFt3pT24k88O4&libraries=places"></script>
+                    <div className="App">
+                        <Combobox onSelect={handleSelect} aria-labelledby="demo">
+                            <ComboboxInput
+                                style={{ width: 300, maxWidth: "90%" }}
+                                value={value}
+                                onChange={handleInput}
+                                disabled={!ready}
+                            />
+                            <ComboboxPopover>
+                                <ComboboxList>{status === "OK" && renderSuggestions()}</ComboboxList>
+                            </ComboboxPopover>
+                        </Combobox>
+                    </div>
+                </>
             }
             <div style={{ height: "100vh", width: "100%" }}>
                 <GoogleMapReact
-                    bootstrapURLKeys={{key: ""}}
+                    bootstrapURLKeys={{key: "AIzaSyDUbXD4z3w1UoiCOxaAj0RFt3pT24k88O4"}}
                     defaultCenter={center}
                     defaultZoom={zoom}
                     draggable={true}
                     onClick={(e) => click(e)}
-                    yesIWantToUseGoogleMapApiInternals
-                    options={createMapOptions}
                     onGoogleApiLoaded={({ map, maps }) => apiHasLoaded(map, maps)}
+
                 >
                     {
                         searchResult.length > 0 &&
