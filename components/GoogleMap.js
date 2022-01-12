@@ -86,6 +86,9 @@ function SimpleMap(props) {
         setValue,
         clearSuggestions,
     } = usePlacesAutocomplete();
+
+    //google cloud platformda proje açıp api key alınmalı
+    //Geocoding API, Maps JavaScript API, Places API bu apiler enable edilmelidir.
     const googleApiKey = "AIzaSyDUbXD4z3w1UoiCOxaAj0RFt3pT24k88O4";
 
     //arama sonucunda değer seçildiğinde değeri alan fonksiyon
