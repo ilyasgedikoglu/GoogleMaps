@@ -1,9 +1,9 @@
 import React from "react";
 import SimpleMap from "../components/GoogleMap";
-const locations = require("../locations.json");
+const locations = require("../locations.json"); //adres listesi
 
 function Home () {
-    //locations gönderirsek addresleri listeliyor göndermezsek harita üzerinden işaretleyip lat ve lng değerleri alınıyor.
+    //locations gönderirsek adresleri listeliyor göndermezsek harita üzerinden işaretleyip lat ve lng değerleri alınıyor.
     //arama için search=true parametresini gönder. Arama yoksa false gönder
     //            <SimpleMap search={false} />
     return (

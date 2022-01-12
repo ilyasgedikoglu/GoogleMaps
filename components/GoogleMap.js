@@ -1,76 +1,64 @@
 import React, {useEffect, useState} from "react";
 import GoogleMapReact from "google-map-react";
-import Axios from "axios";
 
-import pin from "../pin.png";
-import { Link } from "react-router-dom";
-import PropTypes from "prop-types";
 import Button from '@mui/material/Button';
-import axios from "axios";
 import {Combobox, ComboboxInput, ComboboxList, ComboboxOption, ComboboxPopover} from "@reach/combobox";
 import usePlacesAutocomplete, {getGeocode, getLatLng} from "use-places-autocomplete";
-
 import "@reach/combobox/styles.css";
+
 // Marker component
-const Marker = ({ show, place, search }) => {
+const Marker = ({ show, place }) => {
+    const [showVal, setShowVal] = useState(show)
     const markerStyle = {
-        border: '1px solid white',
-        width: 10,
-        height: 10,
-        borderRadius: '50%',
-        backgroundColor: search ? 'red' : 'blue',
-        cursor: 'pointer',
-        zIndex: 10,
+        left: '-35px',
+        bottom: '45px'
     };
 
+    //markera tıklanınca  info popup ının gösterilmesi değiştirme
     const changeShow = () => {
-        window.alert('geldi')
+        setShowVal(!showVal);
     }
 
     return (
         <>
             {
-                !show ?
-                    <div style={markerStyle}/>
-                    :
-                    <div style={markerStyle}/>
+                //marker
+                <Button style={markerStyle} onClick={() => changeShow(place)}>
+                    <img src={'../pin.png'}/>
+                </Button>
             }
-            {show && <InfoWindow place={place} />}
+            {
+                //info popupı gösterme
+                showVal && place !== null &&
+                <InfoWindow place={place} />
+            }
         </>
     );
 };
 
-// InfoWindow component
+// InfoWindow component. Marker üzerine tıklanınca açılan popup
 const InfoWindow = (props) => {
     const { place } = props;
     const infoWindowStyle = {
         position: 'relative',
-        bottom: 150,
-        left: '-45px',
-        width: 220,
-        backgroundColor: 'white',
+        bottom: 215,
+        left: '-110px',
+        width: 200,
+        backgroundColor: props.place.type === "company" ? "white" : "yellow",
         boxShadow: '0 2px 7px 1px rgba(0, 0, 0, 0.3)',
         padding: 10,
-        fontSize: 14,
-        zIndex: 100,
+        fontSize: 12,
+        height: 100,
+        borderRadius: 15
     };
 
     return (
         <div style={infoWindowStyle}>
-            <div style={{ fontSize: 16 }}>
-                {place.name}
+            <div style={{ fontSize: 14 }}>
+                <span>{place.title}</span>
             </div>
             <div style={{ fontSize: 14 }}>
-        <span style={{ color: 'grey' }}>
-          {place.rating}
-            {' '}
-        </span>
-                <span style={{ color: 'orange' }}>
-          {String.fromCharCode(9733).repeat(Math.floor(place.rating))}
-        </span>
-                <span style={{ color: 'lightgrey' }}>
-          {String.fromCharCode(9733).repeat(5 - Math.floor(place.rating))}
-        </span>
+                <span>{place.addresses[0].address}</span>
             </div>
         </div>
     );
@@ -81,14 +69,16 @@ function SimpleMap(props) {
         lat: 39.93361906501069,
         lng: 32.85925510281058
     });
+    const [searchCenter, setSearchCenter] = useState({
+        lat: 39.93361906501069,
+        lng: 32.85925510281058
+    });
     const [zoom, setZoom] = useState(16)
-    const [lat, setLat] = useState(center.lat)
-    const [lng, setLng] = useState(center.lng)
-    const [address, setAddress] = useState("");
-    const [searchResult, setSearchResult] = useState([]);
-    const [mapInstance, setMapInstance] = useState(null);
-    const [mapApi, setMapApi] = useState(null);
-
+    const [searchZoom, setSearchZoom] = useState(16)
+    const [lat, setLat] = useState(center.lat) //haritaya tıklanınca alınan lat değeri
+    const [lng, setLng] = useState(center.lng) //haritaya tıklanınca alınan lng değeri
+    //adres listesi
+    const [addresses, setAddresses] = useState(props.locations != null && props.locations.length > 0 ? props.locations : []);
     const {
         ready,
         value,
@@ -96,25 +86,29 @@ function SimpleMap(props) {
         setValue,
         clearSuggestions,
     } = usePlacesAutocomplete();
+    const googleApiKey = "AIzaSyDUbXD4z3w1UoiCOxaAj0RFt3pT24k88O4";
 
+    //arama sonucunda değer seçildiğinde değeri alan fonksiyon
     const handleInput = (e) => {
         setValue(e.target.value);
     };
 
+    //arama sonucunda listeden bir yer seçildiğinde lat ve lng değerlerinin alınıp seçilen yere zoom yapan fonksiyon
     const handleSelect = (val) => {
         setValue(val, false);
         getGeocode({ address: val })
             .then((results) => getLatLng(results[0]))
-            .then(({ lat, lng }) => {
-                setLat(lat);
-                setLng(lng);
-                setCenter({
+            .then(({ lat, lng, formatted_address }) => {
+                setSearchCenter({
                     lat: lat,
                     lng: lng
                 });
-                setZoom(7);
-                console.log("📍 Coordinates: ", { lat, lng });
-                clearSuggestions()
+                setSearchZoom(18);
+                if (addresses !== null && addresses.length <= 0){
+                    setLat(lat);
+                    setLng(lng);
+                }
+                clearSuggestions();
             })
             .catch((error) => {
                 clearSuggestions()
@@ -122,6 +116,7 @@ function SimpleMap(props) {
             });
     };
 
+    //textbox a değer giriliyorken çıkan sonuçları render eden fonksiyon
     const renderSuggestions = () => {
         const suggestions = data.map(({ place_id, description }) => (
             <ComboboxOption key={place_id} value={description} />
@@ -140,46 +135,20 @@ function SimpleMap(props) {
         );
     };
 
-
-    const createMapOptions = (maps) => {
-        return {
-            panControl: false,
-            mapTypeControl: false,
-            scrollwheel: true,
-            styles: [{ stylers: [{ 'saturation': -100 }, { 'gamma': 0.8 }, { 'lightness': 4 }, { 'visibility': 'on' }] }]
-        }
-    }
-
-    const apiHasLoaded = (map, maps) => {
-        setMapApi(maps);
-        setMapInstance(map);
-        console.log(map);
-        console.log(maps);
-
-        //setMapApi(maps);
-        //setMapApiLoaded(true);
-        //setMapInstance(map)
-    };
-
     //haritada herhangi bir noktaya basınca lat ve lng değerleri alınıyor
     function click(e) {
         setLng(e.lng);
         setLat(e.lat)
-        console.log(e.lat);
-        console.log(e.lng);
-    }
-
-    function clearSearchBox() {
-        setAddress('');
     }
 
     return (
         <div>
             {
+                //arama textboxı
                 props.search &&
                 <>
-                    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDUbXD4z3w1UoiCOxaAj0RFt3pT24k88O4&libraries=places"></script>
-                    <div className="App">
+                    <script src={"https://maps.googleapis.com/maps/api/js?key=" + googleApiKey + "&libraries=places"}></script>
+                    <div>
                         <Combobox onSelect={handleSelect} aria-labelledby="demo">
                             <ComboboxInput
                                 style={{ width: 300, maxWidth: "90%" }}
@@ -194,55 +163,47 @@ function SimpleMap(props) {
                     </div>
                 </>
             }
-            <div style={{ height: "100vh", width: "100%" }}>
-                <GoogleMapReact
-                    bootstrapURLKeys={{key: "AIzaSyDUbXD4z3w1UoiCOxaAj0RFt3pT24k88O4"}}
-                    defaultCenter={center}
-                    defaultZoom={zoom}
-                    draggable={true}
-                    onClick={(e) => click(e)}
-                    onGoogleApiLoaded={({ map, maps }) => apiHasLoaded(map, maps)}
-
-                >
-                    {
-                        searchResult.length > 0 &&
-                            searchResult.map((item, i) =>
-                                <Marker
-                                    key={i}
-                                    lat={item.lat}
-                                    lng={item.lng}
-                                    place={item}
-                                    show={false}
-                                    search={true}
-                                />
-                            )
-                    }
-                    {
-                        props.locations && props.locations.length > 0 &&
-                            props.locations.map((item, i) =>
-                                item.address.length > 0 &&
-                                item.address.map((address, z) =>
+            {
+                <div style={{ height: "100vh", width: "100%" }}>
+                    <GoogleMapReact
+                        bootstrapURLKeys={{key: googleApiKey}}
+                        defaultCenter={center}
+                        center={searchCenter}
+                        defaultZoom={zoom}
+                        zoom={searchZoom}
+                        draggable={true}
+                        onClick={(e) => click(e)}
+                    >
+                        {
+                            //adresler listeleniyorken çalışır. Eğer adresler listeleniyorken arama yapılırsa aranan yere zoom yapar
+                            addresses && addresses.length > 0 &&
+                            addresses.map((item, i) =>
+                                item.addresses.length > 0 &&
+                                item.addresses.map((address, z) =>
                                     <Marker
                                         key={address.id}
                                         lat={address.lat}
                                         lng={address.lng}
                                         place={item}
                                         show={false}
-                                        search={false}
                                     />
                                 )
                             )
-                    }
-                    <Marker
-                        key={1}
-                        lat={lat}
-                        lng={lng}
-                        place={""}
-                        show={false}
-                        search={false}
-                    />
-                </GoogleMapReact>
-            </div>
+                        }
+                        {
+                            //adresler listelenmiyorken haritadan tıklanma yapıldığında veya arama yapıldığında çalışır
+                            (addresses === null || addresses.length <= 0) &&
+                            <Marker
+                                key={null}
+                                lat={lat}
+                                lng={lng}
+                                place={null}
+                                show={false}
+                            />
+                        }
+                    </GoogleMapReact>
+                </div>
+            }
         </div>
     );
 }

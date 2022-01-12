@@ -2,15 +2,11 @@
   {
     "id": 1,
     "title": "MS Flux",
-    "website": "www.google.com",
-    "image": " ",
-    "address": [
+    "type": "product",
+    "addresses": [
       {
         "id": 1,
-        "country": "Finland",
-        "city": "Helsinki",
-        "street": "Hogbergsgatan 35",
-        "postcode": "00101",
+        "address": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
         "lat": "39.935772",
         "lng": "32.848697"
       }
@@ -19,15 +15,11 @@
   {
     "id": 2,
     "title": "MS Flux",
-    "website": "www.google.com",
-    "image": " ",
-    "address": [
+    "type": "company",
+    "addresses": [
       {
         "id": 1,
-        "country": "Finland",
-        "city": "Helsinki",
-        "street": "Yliopistonkatu 4",
-        "postcode": "00101",
+        "address": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
         "lat": "32.879511",
         "lng": "39.935772"
       }
@@ -36,33 +28,24 @@
   {
     "id": 3,
     "title": "MS Flux",
-    "website": "www.google.com",
-    "image": " ",
-    "address": [
+    "type": "product",
+    "addresses": [
       {
         "id": 1,
-        "country": "Finland",
-        "city": "Helsinki",
-        "street": "Ladugordsbogen 3",
-        "postcode": "00790",
+        "address": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
         "lat": "32.876077",
-        "lng": "39.935772"
+        "lng": "45.935772"
       }
     ]
   },
   {
     "id": 4,
     "title": "MS Flux",
-    "website": "www.google.com",
-    "image": " ",
-    "address": [
+    "type": "company",
+    "addresses": [
       {
-        "id": 1,
-        "country": "Finland",
-        "city": "Helsinki",
-        "street": "Haartmansgatan 4",
-        "postcode": "00290",
-        "lat": "32.833162",
+        "address": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+        "lat": "40.833162",
         "lng": "39.935772"
       }
     ]
